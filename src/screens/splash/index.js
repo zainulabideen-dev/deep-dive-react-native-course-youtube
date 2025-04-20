@@ -1,7 +1,13 @@
 import {View, Text, StatusBar, Image} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 
-export default function SplashScreen() {
+export default function SplashScreen({navigation}) {
+  useEffect(() => {
+    setTimeout(() => {
+      navigation.replace('LoginScreen');
+    }, 3000);
+  }, []);
+
   return (
     <View
       style={{
