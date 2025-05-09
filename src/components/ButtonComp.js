@@ -1,10 +1,15 @@
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Image} from 'react-native';
 import React from 'react';
 
-export default function ButtonComp({extraStyle, title}) {
+export default function ButtonComp({
+  extraStyle,
+  title,
+  icon = undefined,
+  onPress,
+}) {
   return (
     <TouchableOpacity
-      onPress={() => console.log('pressed')}
+      onPress={() => onPress()}
       style={[
         {
           backgroundColor: '#3498db',
@@ -15,7 +20,17 @@ export default function ButtonComp({extraStyle, title}) {
         },
         extraStyle,
       ]}>
-      <View>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        {icon != undefined ? (
+          <Image
+            style={{
+              width: 27,
+              height: 27,
+              marginRight: 10,
+            }}
+            source={icon}
+          />
+        ) : null}
         <Text
           style={{
             color: 'white',
