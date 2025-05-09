@@ -10,7 +10,10 @@ export default function InputTextComp({
 }) {
   return (
     <View style={[extraStyle]}>
-      <Text style={{marginLeft: 5, marginBottom: 3}}>{title}</Text>
+      <Text
+        style={{marginLeft: 5, marginBottom: 3, fontFamily: 'Poppins-Regular'}}>
+        {title}
+      </Text>
       <View
         style={{
           borderWidth: 1,

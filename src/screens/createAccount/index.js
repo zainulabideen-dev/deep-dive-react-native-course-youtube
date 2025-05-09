@@ -9,8 +9,8 @@ export default function CreateAccountScreen() {
     <SafeAreaComp>
       <Text
         style={{
-          fontWeight: 'bold',
           fontSize: 30,
+          fontFamily: 'Poppins-Bold',
         }}>
         {'Create New Account'}
       </Text>

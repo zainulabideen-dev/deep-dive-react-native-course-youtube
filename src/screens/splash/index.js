@@ -27,8 +27,8 @@ export default function SplashScreen({navigation}) {
       <Text
         style={{
           fontSize: 30,
-          fontWeight: 'bold',
           color: 'white',
+          fontFamily: 'Poppins-Bold',
         }}>
         Geo Surveyor
       </Text>

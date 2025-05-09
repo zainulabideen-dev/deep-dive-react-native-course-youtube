@@ -34,6 +34,7 @@ export default function ButtonComp({
         <Text
           style={{
             color: 'white',
+            fontFamily: 'Poppins-Regular',
           }}>
           {title}
         </Text>

@@ -9,7 +9,7 @@ export default function LoginScreen({navigation}) {
     <SafeAreaComp>
       <Text
         style={{
-          fontWeight: 'bold',
+          fontFamily: 'Poppins-Bold',
           fontSize: 30,
         }}>
         {'Welcome to GeoSurvey\nLogin'}
@@ -46,7 +46,7 @@ export default function LoginScreen({navigation}) {
             style={{
               textAlign: 'right',
               color: '#3498db',
-              fontWeight: '600',
+              fontFamily: 'Poppins-Medium',
             }}>
             Create New Account?
           </Text>
