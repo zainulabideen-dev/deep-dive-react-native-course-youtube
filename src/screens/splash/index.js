@@ -1,10 +1,12 @@
 import {View, Text, StatusBar, Image} from 'react-native';
 import React, {useEffect} from 'react';
+import {GOOGLE_MAPS_API_KEY} from '@env';
 
 export default function SplashScreen({navigation}) {
   useEffect(() => {
     setTimeout(() => {
-      navigation.replace('LoginScreen');
+      console.log(GOOGLE_MAPS_API_KEY, 'GOOGLE_MAPS_API_KEY');
+      // navigation.replace('LoginScreen');
     }, 3000);
   }, []);
 
