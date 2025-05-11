@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "2277115017",
+    "project_id": "codingwithzain-2dce4",
+    "storage_bucket": "codingwithzain-2dce4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2277115017:android:125fb265ed8ecc7bf33258",
+        "android_client_info": {
+          "package_name": "com.geosurveycwz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXy9v5_2KPEl7XwsYzb53WbMgjS0TBHYw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
