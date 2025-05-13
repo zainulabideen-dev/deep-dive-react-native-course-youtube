@@ -1,10 +1,35 @@
 import {View, Text} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import InputTextComp from '../../components/InputTextComp';
 import ButtonComp from '../../components/ButtonComp';
 import SafeAreaComp from '../../components/SafeAreaComp';
+import {isValidEmail} from '../../config/helper';
+import Toast from 'react-native-toast-message';
 
 export default function CreateAccountScreen() {
+  const [data, setData] = useState({
+    email: undefined,
+    password: undefined,
+  });
+
+  async function createAccount() {
+    if (!isValidEmail(data.email)) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter a valid email',
+      });
+      return;
+    }
+
+    if (data.password == undefined || data.password.length < 5) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter password. Must be 8 digit',
+      });
+      return;
+    }
+  }
+
   return (
     <SafeAreaComp>
       <Text
@@ -22,6 +47,12 @@ export default function CreateAccountScreen() {
           placeHolder={'email address'}
           keyboardType={'email-address'}
           title={'Email Address'}
+          onChangeText={text =>
+            setData(prevData => ({
+              ...prevData,
+              email: text,
+            }))
+          }
         />
         <InputTextComp
           extraStyle={{
@@ -30,8 +61,15 @@ export default function CreateAccountScreen() {
           secureTextEntry={true}
           placeHolder={'password'}
           title={'Password'}
+          onChangeText={text =>
+            setData(prevData => ({
+              ...prevData,
+              password: text,
+            }))
+          }
         />
         <ButtonComp
+          onPress={() => createAccount()}
           title={'Create Account'}
           extraStyle={{
             marginTop: 20,

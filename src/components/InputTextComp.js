@@ -7,6 +7,7 @@ export default function InputTextComp({
   keyboardType = 'default',
   extraStyle,
   secureTextEntry = false,
+  onChangeText,
 }) {
   return (
     <View style={[extraStyle]}>
@@ -23,6 +24,7 @@ export default function InputTextComp({
         <TextInput
           secureTextEntry={secureTextEntry}
           keyboardType={keyboardType}
+          onChangeText={text => onChangeText(text)}
           style={{
             height: 50,
             paddingHorizontal: 15,
