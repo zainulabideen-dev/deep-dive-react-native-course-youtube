@@ -5,11 +5,13 @@ import ButtonComp from '../../components/ButtonComp';
 import SafeAreaComp from '../../components/SafeAreaComp';
 import {isValidEmail} from '../../config/helper';
 import Toast from 'react-native-toast-message';
+import LoadingModal from '../../modals/LoadingModal';
 
 export default function CreateAccountScreen() {
   const [data, setData] = useState({
     email: undefined,
     password: undefined,
+    showModal: false,
   });
 
   async function createAccount() {
@@ -28,10 +30,19 @@ export default function CreateAccountScreen() {
       });
       return;
     }
+
+    setData(prevData => ({
+      ...prevData,
+      showModal: true,
+    }));
+
+    //firebase code
+    //set loader false
   }
 
   return (
     <SafeAreaComp>
+      <LoadingModal visible={data.showModal} />
       <Text
         style={{
           fontSize: 30,
