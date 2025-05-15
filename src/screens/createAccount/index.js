@@ -6,6 +6,10 @@ import SafeAreaComp from '../../components/SafeAreaComp';
 import {isValidEmail} from '../../config/helper';
 import Toast from 'react-native-toast-message';
 import LoadingModal from '../../modals/LoadingModal';
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+} from '@react-native-firebase/auth';
 
 export default function CreateAccountScreen() {
   const [data, setData] = useState({
@@ -36,8 +40,34 @@ export default function CreateAccountScreen() {
       showModal: true,
     }));
 
-    //firebase code
-    //set loader false
+    const auth = getAuth();
+    createUserWithEmailAndPassword(
+      auth,
+      data.email.trim(),
+      data.password.trim(),
+    )
+      .then(userCredentials => {
+        setData(prevData => ({
+          ...prevData,
+          showModal: false,
+          email: undefined,
+          password: undefined,
+        }));
+        console.log('Account Created Successfully');
+        console.log(userCredentials);
+      })
+      .catch(error => {
+        setData(prevData => ({
+          ...prevData,
+          showModal: false,
+          email: undefined,
+          password: undefined,
+        }));
+        if (error.code === 'auth/email-already-in-use') {
+          console.log('Account Already created');
+        }
+        console.log('=> Create Account Error', error);
+      });
   }
 
   return (
@@ -55,6 +85,7 @@ export default function CreateAccountScreen() {
           extraStyle={{
             marginTop: 20,
           }}
+          value={data.email}
           placeHolder={'email address'}
           keyboardType={'email-address'}
           title={'Email Address'}
@@ -69,6 +100,7 @@ export default function CreateAccountScreen() {
           extraStyle={{
             marginTop: 20,
           }}
+          value={data.password}
           secureTextEntry={true}
           placeHolder={'password'}
           title={'Password'}

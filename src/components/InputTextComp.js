@@ -8,6 +8,7 @@ export default function InputTextComp({
   extraStyle,
   secureTextEntry = false,
   onChangeText,
+  value = undefined,
 }) {
   return (
     <View style={[extraStyle]}>
@@ -22,6 +23,7 @@ export default function InputTextComp({
           borderRadius: 10,
         }}>
         <TextInput
+          value={value}
           secureTextEntry={secureTextEntry}
           keyboardType={keyboardType}
           onChangeText={text => onChangeText(text)}
