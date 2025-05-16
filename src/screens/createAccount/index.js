@@ -1,4 +1,4 @@
-import {View, Text} from 'react-native';
+import {View, Text, Alert} from 'react-native';
 import React, {useState} from 'react';
 import InputTextComp from '../../components/InputTextComp';
 import ButtonComp from '../../components/ButtonComp';
@@ -10,12 +10,16 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
 } from '@react-native-firebase/auth';
+import AlertModal from '../../modals/AlertModal';
 
 export default function CreateAccountScreen() {
   const [data, setData] = useState({
     email: undefined,
     password: undefined,
     showModal: false,
+    showAlertModal: false,
+    showAlertTitle: undefined,
+    showAlertDescription: undefined,
   });
 
   async function createAccount() {
@@ -52,20 +56,30 @@ export default function CreateAccountScreen() {
           showModal: false,
           email: undefined,
           password: undefined,
+          showAlertModal: true,
+          showAlertTitle: 'New Account',
+          showAlertDescription: 'Account Created Successfully',
         }));
-        console.log('Account Created Successfully');
-        console.log(userCredentials);
       })
       .catch(error => {
+        let errorObj = {
+          showAlertTitle: 'Alert',
+          showAlertDescription: 'An Error Occured',
+        };
+        if (error.code === 'auth/email-already-in-use') {
+          errorObj.showAlertTitle = 'Accound Exist';
+          errorObj.showAlertDescription =
+            'This Email Account is Already in use. Please try with another Email';
+        }
         setData(prevData => ({
           ...prevData,
           showModal: false,
           email: undefined,
           password: undefined,
+          showAlertModal: true,
+          showAlertTitle: errorObj.showAlertTitle,
+          showAlertDescription: errorObj.showAlertDescription,
         }));
-        if (error.code === 'auth/email-already-in-use') {
-          console.log('Account Already created');
-        }
         console.log('=> Create Account Error', error);
       });
   }
@@ -73,6 +87,17 @@ export default function CreateAccountScreen() {
   return (
     <SafeAreaComp>
       <LoadingModal visible={data.showModal} />
+      <AlertModal
+        visible={data.showAlertModal}
+        title={data.showAlertTitle}
+        description={data.showAlertDescription}
+        onPress={() => {
+          setData(prevData => ({
+            ...prevData,
+            showAlertModal: false,
+          }));
+        }}
+      />
       <Text
         style={{
           fontSize: 30,
