@@ -1,12 +1,84 @@
 import {View, Text, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import InputTextComp from '../../components/InputTextComp';
 import ButtonComp from '../../components/ButtonComp';
 import SafeAreaComp from '../../components/SafeAreaComp';
+import LoadingModal from '../../modals/LoadingModal';
+import AlertModal from '../../modals/AlertModal';
+import {isValidEmail} from '../../config/helper';
+import Toast from 'react-native-toast-message';
+import {getAuth, signInWithEmailAndPassword} from '@react-native-firebase/auth';
 
 export default function LoginScreen({navigation}) {
+  const [data, setData] = useState({
+    email: undefined,
+    password: undefined,
+    showModal: false,
+    showAlertModal: false,
+    showAlertTitle: undefined,
+    showAlertDescription: undefined,
+  });
+
+  async function loginUsingEmailPassword() {
+    if (!isValidEmail(data.email)) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter a valid email',
+      });
+      return;
+    }
+
+    if (data.password == undefined || data.password.length < 5) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter password. Must be 8 digit',
+      });
+      return;
+    }
+
+    setData(prevData => ({
+      ...prevData,
+      showModal: true,
+    }));
+
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, data.email, data.password)
+      .then(userCredentials => {
+        setData(prevData => ({
+          ...prevData,
+          showModal: false,
+          email: undefined,
+          password: undefined,
+        }));
+        console.log('Login Successfully', userCredentials);
+      })
+      .catch(error => {
+        setData(prevData => ({
+          ...prevData,
+          showModal: false,
+          email: undefined,
+          password: undefined,
+          showAlertModal: true,
+          showAlertTitle: 'Wrong Credentials',
+          showAlertDescription: 'Incorrect Email or Password',
+        }));
+        console.log('=> Login Error', error);
+      });
+  }
   return (
     <SafeAreaComp>
+      <LoadingModal visible={data.showModal} />
+      <AlertModal
+        visible={data.showAlertModal}
+        title={data.showAlertTitle}
+        description={data.showAlertDescription}
+        onPress={() => {
+          setData(prevData => ({
+            ...prevData,
+            showAlertModal: false,
+          }));
+        }}
+      />
       <Text
         style={{
           fontFamily: 'Poppins-Bold',
@@ -22,6 +94,13 @@ export default function LoginScreen({navigation}) {
           placeHolder={'email address'}
           keyboardType={'email-address'}
           title={'Email Address'}
+          value={data.email}
+          onChangeText={text =>
+            setData(prevData => ({
+              ...prevData,
+              email: text,
+            }))
+          }
         />
         <InputTextComp
           extraStyle={{
@@ -30,8 +109,16 @@ export default function LoginScreen({navigation}) {
           secureTextEntry={true}
           placeHolder={'password'}
           title={'Password'}
+          value={data.password}
+          onChangeText={text =>
+            setData(prevData => ({
+              ...prevData,
+              password: text,
+            }))
+          }
         />
         <ButtonComp
+          onPress={() => loginUsingEmailPassword()}
           title={'LOGIN'}
           extraStyle={{
             marginTop: 20,
