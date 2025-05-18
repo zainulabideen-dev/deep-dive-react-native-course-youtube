@@ -7,7 +7,14 @@ import LoadingModal from '../../modals/LoadingModal';
 import AlertModal from '../../modals/AlertModal';
 import {isValidEmail} from '../../config/helper';
 import Toast from 'react-native-toast-message';
-import {getAuth, signInWithEmailAndPassword} from '@react-native-firebase/auth';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithCredential,
+  signInWithEmailAndPassword,
+} from '@react-native-firebase/auth';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {FIRE_BASE_WEB_CLIENT_ID} from '@env';
 
 export default function LoginScreen({navigation}) {
   const [data, setData] = useState({
@@ -65,6 +72,37 @@ export default function LoginScreen({navigation}) {
         console.log('=> Login Error', error);
       });
   }
+
+  async function googleSignIn(params) {
+    try {
+      const auth = getAuth();
+      GoogleSignin.configure({
+        offlineAccess: false,
+        webClientId: FIRE_BASE_WEB_CLIENT_ID,
+        scopes: ['profile', 'email'],
+      });
+      await GoogleSignin.hasPlayServices();
+      const signInResult = await GoogleSignin.signIn();
+      const idToken = signInResult.data?.idToken;
+      const googleCredentials = GoogleAuthProvider.credential(idToken);
+      const userCredentials = await signInWithCredential(
+        auth,
+        googleCredentials,
+      );
+      const user = userCredentials.user;
+      console.log('=> signIn with google success', user);
+    } catch (error) {
+      setData(prevData => ({
+        ...prevData,
+        showModal: false,
+        showAlertModal: true,
+        showAlertTitle: 'Error Occured',
+        showAlertDescription: 'Unable to SignIn.',
+      }));
+      console.log('=> GoogleSignIn Error', error);
+    }
+  }
+
   return (
     <SafeAreaComp>
       <LoadingModal visible={data.showModal} />
@@ -167,6 +205,7 @@ export default function LoginScreen({navigation}) {
           />
         </View>
         <ButtonComp
+          onPress={() => googleSignIn()}
           title={'SIGN IN WITH GOOGLE'}
           icon={require('../../assets/images/google.png')}
           extraStyle={{
