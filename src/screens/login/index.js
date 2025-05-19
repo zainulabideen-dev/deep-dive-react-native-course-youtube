@@ -104,7 +104,7 @@ export default function LoginScreen({navigation}) {
   }
 
   return (
-    <SafeAreaComp>
+    <SafeAreaComp name={'Login'}>
       <LoadingModal visible={data.showModal} />
       <AlertModal
         visible={data.showAlertModal}
@@ -122,7 +122,7 @@ export default function LoginScreen({navigation}) {
           fontFamily: 'Poppins-Bold',
           fontSize: 30,
         }}>
-        {'Welcome to GeoSurvey\nLogin'}
+        {'Welcome to GeoSurvey'}
       </Text>
       <View>
         <InputTextComp

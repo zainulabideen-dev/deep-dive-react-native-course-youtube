@@ -85,7 +85,7 @@ export default function CreateAccountScreen() {
   }
 
   return (
-    <SafeAreaComp>
+    <SafeAreaComp name={'Create Account'}>
       <LoadingModal visible={data.showModal} />
       <AlertModal
         visible={data.showAlertModal}
@@ -98,13 +98,6 @@ export default function CreateAccountScreen() {
           }));
         }}
       />
-      <Text
-        style={{
-          fontSize: 30,
-          fontFamily: 'Poppins-Bold',
-        }}>
-        {'Create New Account'}
-      </Text>
       <View>
         <InputTextComp
           extraStyle={{
