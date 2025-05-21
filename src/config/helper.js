@@ -5,11 +5,11 @@ export const isValidEmail = email => {
   return emailRegex.test(email);
 };
 
-export const storeInToAsynStorage = async (Key, value) => {
+export const storeInToAsyncStorage = async (Key, value) => {
   try {
     await AsyncStorage.setItem(Key, value);
   } catch (error) {
-    console.log('=> Error storeInToAsynStorage', error);
+    console.log('=> Error storeInToAsyncStorage', error);
   }
 };
 

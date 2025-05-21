@@ -5,7 +5,7 @@ import ButtonComp from '../../components/ButtonComp';
 import SafeAreaComp from '../../components/SafeAreaComp';
 import LoadingModal from '../../modals/LoadingModal';
 import AlertModal from '../../modals/AlertModal';
-import {isValidEmail} from '../../config/helper';
+import {isValidEmail, storeInToAsyncStorage} from '../../config/helper';
 import Toast from 'react-native-toast-message';
 import {
   getAuth,
@@ -50,14 +50,17 @@ export default function LoginScreen({navigation}) {
 
     const auth = getAuth();
     signInWithEmailAndPassword(auth, data.email, data.password)
-      .then(userCredentials => {
+      .then(async userCredentials => {
+        console.log('Login Successfully', userCredentials.user.email);
+        const user = userCredentials.user;
+        await storeInToAsyncStorage('userCredentials', JSON.stringify(user));
+        navigation.replace('HomeScreen');
         setData(prevData => ({
           ...prevData,
           showModal: false,
           email: undefined,
           password: undefined,
         }));
-        console.log('Login Successfully', userCredentials);
       })
       .catch(error => {
         setData(prevData => ({
@@ -90,6 +93,8 @@ export default function LoginScreen({navigation}) {
         googleCredentials,
       );
       const user = userCredentials.user;
+      await storeInToAsyncStorage('userCredentials', JSON.stringify(user));
+      navigation.replace('HomeScreen');
       console.log('=> signIn with google success', user);
     } catch (error) {
       setData(prevData => ({

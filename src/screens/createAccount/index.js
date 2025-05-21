@@ -12,7 +12,7 @@ import {
 } from '@react-native-firebase/auth';
 import AlertModal from '../../modals/AlertModal';
 
-export default function CreateAccountScreen() {
+export default function CreateAccountScreen({navigation}) {
   const [data, setData] = useState({
     email: undefined,
     password: undefined,
@@ -85,7 +85,7 @@ export default function CreateAccountScreen() {
   }
 
   return (
-    <SafeAreaComp name={'Create Account'}>
+    <SafeAreaComp name={'Create Account'} goBack={true} navigation={navigation}>
       <LoadingModal visible={data.showModal} />
       <AlertModal
         visible={data.showAlertModal}

@@ -5,6 +5,7 @@ import SplashScreen from '../splash';
 import LoginScreen from '../login';
 import CreateAccountScreen from '../createAccount';
 import Toast from 'react-native-toast-message';
+import HomeScreen from '../home';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,7 @@ export default function NavigationScreen() {
             name="CreateAccountScreen"
             component={CreateAccountScreen}
           />
+          <Stack.Screen name="HomeScreen" component={HomeScreen} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast position="top" topOffset={50} visibilityTime={2000} />

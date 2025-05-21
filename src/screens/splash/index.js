@@ -1,12 +1,22 @@
 import {View, Text, StatusBar, Image} from 'react-native';
 import React, {useEffect} from 'react';
+import {getDataFromAsyncStorage} from '../../config/helper';
 
 export default function SplashScreen({navigation}) {
   useEffect(() => {
     setTimeout(() => {
-      navigation.replace('LoginScreen');
+      checkLogin();
     }, 3000);
   }, []);
+
+  async function checkLogin() {
+    const user = await getDataFromAsyncStorage('userCredentials');
+    if (user) {
+      navigation.replace('HomeScreen');
+    } else {
+      navigation.replace('LoginScreen');
+    }
+  }
 
   return (
     <View
