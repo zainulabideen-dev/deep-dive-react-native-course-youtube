@@ -167,20 +167,36 @@ export default function LoginScreen({navigation}) {
             marginTop: 20,
           }}
         />
-        <TouchableOpacity
-          onPress={() => navigation.navigate('CreateAccountScreen')}
-          style={{
-            marginTop: 3,
-          }}>
-          <Text
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ForgotPasswordScreen')}
             style={{
-              textAlign: 'right',
-              color: '#3498db',
-              fontFamily: 'Poppins-Medium',
+              marginTop: 3,
             }}>
-            Create New Account?
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={{
+                textAlign: 'right',
+                color: '#3498db',
+                fontFamily: 'Poppins-Medium',
+              }}>
+              Forgot Password
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('CreateAccountScreen')}
+            style={{
+              marginTop: 3,
+            }}>
+            <Text
+              style={{
+                textAlign: 'right',
+                color: '#3498db',
+                fontFamily: 'Poppins-Medium',
+              }}>
+              Create New Account?
+            </Text>
+          </TouchableOpacity>
+        </View>
         <View
           style={{
             flexDirection: 'row',
