@@ -7,6 +7,8 @@ export default function SafeAreaComp({
   name,
   goBack = false,
   navigation,
+  rightIcons,
+  onPressRightIcons,
 }) {
   return (
     <SafeAreaView
@@ -14,7 +16,13 @@ export default function SafeAreaComp({
         flex: 1,
       }}>
       <StatusBar backgroundColor={'#3498db'} />
-      <HeaderComp name={name} goBack={goBack} navigation={navigation} />
+      <HeaderComp
+        name={name}
+        goBack={goBack}
+        navigation={navigation}
+        rightIcons={rightIcons}
+        onPressRightIcons={icon => onPressRightIcons(icon)}
+      />
       <View style={{flex: 1, padding: 15}}>{children}</View>
     </SafeAreaView>
   );
