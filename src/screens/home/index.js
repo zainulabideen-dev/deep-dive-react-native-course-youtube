@@ -3,6 +3,7 @@ import React, {useRef} from 'react';
 import SafeAreaComp from '../../components/SafeAreaComp';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import CreateSurveyBottomSheet from '../../assets/bottomSheets/CreateSurveyBottomSheet';
+import Toast from 'react-native-toast-message';
 
 export default function HomeScreen() {
   const refRBSheet = useRef();
@@ -24,7 +25,18 @@ export default function HomeScreen() {
       ]}
       onPressRightIcons={icon => onRightIconPress(icon)}>
       <View style={{flex: 1}}>
-        <CreateSurveyBottomSheet refRBSheet={refRBSheet} />
+        <CreateSurveyBottomSheet
+          refRBSheet={refRBSheet}
+          onClose={result => {
+            refRBSheet.current.close();
+            Toast.show({
+              text1: result
+                ? 'Survey Create Successfully'
+                : 'Uanle to create Survey',
+              type: result ? 'success' : 'error',
+            });
+          }}
+        />
       </View>
     </SafeAreaComp>
   );

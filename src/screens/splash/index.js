@@ -1,6 +1,7 @@
 import {View, Text, StatusBar, Image} from 'react-native';
 import React, {useEffect} from 'react';
 import {getDataFromAsyncStorage} from '../../config/helper';
+import {createTables} from '../../config/sqliteStorage';
 
 export default function SplashScreen({navigation}) {
   useEffect(() => {
@@ -10,6 +11,7 @@ export default function SplashScreen({navigation}) {
   }, []);
 
   async function checkLogin() {
+    createTables();
     const user = await getDataFromAsyncStorage('userCredentials');
     if (user) {
       navigation.replace('HomeScreen');

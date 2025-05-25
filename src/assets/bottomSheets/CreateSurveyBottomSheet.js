@@ -4,8 +4,10 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import InputTextComp from '../../components/InputTextComp';
 import ButtonComp from '../../components/ButtonComp';
 import Toast from 'react-native-toast-message';
+import {getFormattedDate} from '../../config/helper';
+import {insertDataInSqliteTable} from '../../config/sqliteStorage';
 
-export default function CreateSurveyBottomSheet({refRBSheet}) {
+export default function CreateSurveyBottomSheet({refRBSheet, onClose}) {
   const [data, setData] = useState({
     name: undefined,
   });
@@ -18,8 +20,11 @@ export default function CreateSurveyBottomSheet({refRBSheet}) {
       });
       return;
     }
-
-    // create new survey
+    const result = await insertDataInSqliteTable(
+      'INSERT INTO Surveys (name, date) VALUES (?,?)',
+      [data.name, getFormattedDate()],
+    );
+    onClose(result.success);
   }
 
   return (

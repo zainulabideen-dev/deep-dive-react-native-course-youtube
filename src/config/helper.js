@@ -29,3 +29,11 @@ export const deleteDataFromAsyncStorage = async key => {
     console.log('=> Error deleteDataFromAsyncStorage', error);
   }
 };
+
+export function getFormattedDate() {
+  const date = new Date();
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = date.toLocaleString('default', {month: 'short'});
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+}
