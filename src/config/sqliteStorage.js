@@ -17,7 +17,7 @@ export function createTables() {
     );
   });
 }
-export function insertDataInSqliteTable(query, list) {
+export function insertDataInSqliteTable(query, list = []) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
@@ -29,11 +29,38 @@ export function insertDataInSqliteTable(query, list) {
             console.log('Data inserted successfully');
             resolve({success: true});
           } else {
-            resolve({success: false});
+            reject({success: false});
             console.log('Data insert failed');
           }
         },
         error => {
+          reject({success: false});
+          console.log('SQL Error:', error);
+        },
+      );
+    });
+  });
+}
+
+export function getDataFromSqlite(query, list = []) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        query,
+        list,
+        (tx, results) => {
+          if (results.rows.length > 0) {
+            let dataList = [];
+            for (let i = 0; i < results.rows.length; i++) {
+              dataList.push(results.rows.item(i));
+            }
+            resolve({success: true, dataList});
+          } else {
+            reject({success: true, dataList: []});
+          }
+        },
+        error => {
+          reject({success: false, dataList: []});
           console.log('SQL Error:', error);
         },
       );

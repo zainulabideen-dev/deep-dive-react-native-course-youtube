@@ -1,12 +1,31 @@
-import {View, Text} from 'react-native';
-import React, {useRef} from 'react';
+import {View, Text, FlatList} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
 import SafeAreaComp from '../../components/SafeAreaComp';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import CreateSurveyBottomSheet from '../../assets/bottomSheets/CreateSurveyBottomSheet';
 import Toast from 'react-native-toast-message';
+import {getDataFromSqlite} from '../../config/sqliteStorage';
+import SurveyItemComp from '../../components/SurveyItemComp';
 
 export default function HomeScreen() {
   const refRBSheet = useRef();
+  const [data, setData] = useState({
+    listOfSurveys: [],
+  });
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  async function fetchData() {
+    const list = await getDataFromSqlite('SELECT * FROM Surveys');
+    if (list) {
+      setData(prevData => ({
+        ...prevData,
+        listOfSurveys: list.dataList,
+      }));
+    }
+  }
 
   function onRightIconPress(icon) {
     if (icon.id === 1) {
@@ -36,6 +55,11 @@ export default function HomeScreen() {
               type: result ? 'success' : 'error',
             });
           }}
+        />
+        <FlatList
+          data={data.listOfSurveys}
+          renderItem={({item}) => <SurveyItemComp item={item} />}
+          keyExtractor={item => item.id}
         />
       </View>
     </SafeAreaComp>
