@@ -9,6 +9,7 @@ export default function SafeAreaComp({
   navigation,
   rightIcons,
   onPressRightIcons,
+  needPadding = true,
 }) {
   return (
     <SafeAreaView
@@ -23,7 +24,7 @@ export default function SafeAreaComp({
         rightIcons={rightIcons}
         onPressRightIcons={icon => onPressRightIcons(icon)}
       />
-      <View style={{flex: 1, padding: 15}}>{children}</View>
+      <View style={{flex: 1, padding: needPadding ? 15 : 0}}>{children}</View>
     </SafeAreaView>
   );
 }

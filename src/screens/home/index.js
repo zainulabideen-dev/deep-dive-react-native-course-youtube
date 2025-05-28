@@ -7,7 +7,7 @@ import Toast from 'react-native-toast-message';
 import {getDataFromSqlite} from '../../config/sqliteStorage';
 import SurveyItemComp from '../../components/SurveyItemComp';
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation}) {
   const refRBSheet = useRef();
   const [data, setData] = useState({
     listOfSurveys: [],
@@ -58,7 +58,9 @@ export default function HomeScreen() {
         />
         <FlatList
           data={data.listOfSurveys}
-          renderItem={({item}) => <SurveyItemComp item={item} />}
+          renderItem={({item}) => (
+            <SurveyItemComp item={item} navigation={navigation} />
+          )}
           keyExtractor={item => item.id}
         />
       </View>

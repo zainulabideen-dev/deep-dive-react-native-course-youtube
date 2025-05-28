@@ -7,7 +7,7 @@ export default function HeaderComp({
   name,
   goBack = false,
   navigation,
-  rightIcons,
+  rightIcons = [],
   onPressRightIcons,
 }) {
   const [data, setData] = useState({

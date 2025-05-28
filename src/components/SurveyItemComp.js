@@ -1,9 +1,10 @@
 import {View, Text, TouchableOpacity, Image} from 'react-native';
 import React from 'react';
 
-export default function SurveyItemComp({item}) {
+export default function SurveyItemComp({item, navigation}) {
   return (
     <TouchableOpacity
+      onPress={() => navigation.navigate('SurveyScreen', {survey: item})}
       style={{
         backgroundColor: 'white',
         padding: 13,
