@@ -1,6 +1,7 @@
-import {View, Text, Image, TouchableOpacity} from 'react-native';
+import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import React from 'react';
 import SafeAreaComp from '../../components/SafeAreaComp';
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 
 const plotIcons = [
   {
@@ -16,6 +17,8 @@ const plotIcons = [
     image: require('../../assets/images/polygon.png'),
   },
 ];
+
+//GOOGLE_MAPS_API_KEY
 
 export default function SurveyScreen({route, navigation}) {
   const params = route.params;
@@ -61,9 +64,25 @@ export default function SurveyScreen({route, navigation}) {
         <View
           style={{
             flex: 1,
-            backgroundColor: 'red',
-          }}></View>
+          }}>
+          <MapView
+            provider={PROVIDER_GOOGLE}
+            style={styles.map}
+            zoomControlEnabled
+            region={{
+              latitude: 37.78825,
+              longitude: -122.4324,
+              latitudeDelta: 0.015,
+              longitudeDelta: 0.0121,
+            }}></MapView>
+        </View>
       </View>
     </SafeAreaComp>
   );
 }
+
+const styles = StyleSheet.create({
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+});
