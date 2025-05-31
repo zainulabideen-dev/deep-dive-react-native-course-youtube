@@ -5,7 +5,10 @@ import InputTextComp from '../../components/InputTextComp';
 import ButtonComp from '../../components/ButtonComp';
 import Toast from 'react-native-toast-message';
 import {getFormattedDate} from '../../config/helper';
-import {insertDataInSqliteTable} from '../../config/sqliteStorage';
+import {
+  createNewTable,
+  insertDataInSqliteTable,
+} from '../../config/sqliteStorage';
 
 export default function CreateSurveyBottomSheet({refRBSheet, onClose}) {
   const [data, setData] = useState({
@@ -24,6 +27,11 @@ export default function CreateSurveyBottomSheet({refRBSheet, onClose}) {
       'INSERT INTO Surveys (name, date) VALUES (?,?)',
       [data.name, getFormattedDate()],
     );
+    if (result.success) {
+      const query = `CREATE TABLE IF NOT EXISTS survey_${result.results.insertId} (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, latitude TEXT, longitude TEXT, address TEXT, description TEXT, date TEXT);`;
+      console.log(query);
+      await createNewTable(query);
+    }
     onClose(result.success);
   }
 

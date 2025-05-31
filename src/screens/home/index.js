@@ -4,7 +4,7 @@ import SafeAreaComp from '../../components/SafeAreaComp';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import CreateSurveyBottomSheet from '../../assets/bottomSheets/CreateSurveyBottomSheet';
 import Toast from 'react-native-toast-message';
-import {getDataFromSqlite} from '../../config/sqliteStorage';
+import {checkMyDb, getDataFromSqlite} from '../../config/sqliteStorage';
 import SurveyItemComp from '../../components/SurveyItemComp';
 
 export default function HomeScreen({navigation}) {
@@ -14,6 +14,7 @@ export default function HomeScreen({navigation}) {
   });
 
   useEffect(() => {
+    //checkMyDb();
     fetchData();
   }, []);
 
@@ -54,6 +55,7 @@ export default function HomeScreen({navigation}) {
                 : 'Uanle to create Survey',
               type: result ? 'success' : 'error',
             });
+            fetchData();
           }}
         />
         <FlatList
