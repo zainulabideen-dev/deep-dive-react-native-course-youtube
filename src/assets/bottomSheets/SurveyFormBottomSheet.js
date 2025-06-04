@@ -10,12 +10,29 @@ import {
   insertDataInSqliteTable,
 } from '../../config/sqliteStorage';
 
-export default function SurveyFormBottomSheet({refRBSheet, onClose}) {
+export default function SurveyFormBottomSheet({
+  refRBSheet,
+  onClose,
+  plotData,
+  survey,
+}) {
   const [data, setData] = useState({
     name: undefined,
+    description: '',
   });
 
+  function getPlotType() {
+    if (plotData.point != undefined) {
+      return 'point';
+    } else if (plotData.line != undefined) {
+      return 'line';
+    } else if (plotData.polygon != undefined) {
+      return 'polygon';
+    }
+  }
+
   async function createNewSurvey() {
+    const tableName = `survey_${survey.id}`;
     if (data.name === undefined || data.name.length === 0) {
       Toast.show({
         type: 'error',
@@ -23,16 +40,30 @@ export default function SurveyFormBottomSheet({refRBSheet, onClose}) {
       });
       return;
     }
+
+    const latitude =
+      plotData.point == undefined ? '' : plotData.point.coordinate.latitude;
+    const longitude =
+      plotData.point == undefined ? '' : plotData.point.coordinate.longitude;
+    const coordinates = '';
+    const address = '';
+    let plotType = getPlotType();
+
     const result = await insertDataInSqliteTable(
-      'INSERT INTO Surveys (name, date) VALUES (?,?)',
-      [data.name, getFormattedDate()],
+      `INSERT INTO ${tableName} (name, latitude, longitude, coordinates, address, description, plotType, date) VALUES (?,?,?,?,?,?,?,?)`,
+      [
+        data.name,
+        latitude,
+        longitude,
+        coordinates,
+        address,
+        data.description,
+        plotType,
+        getFormattedDate(),
+      ],
     );
-    if (result.success) {
-      const query = `CREATE TABLE IF NOT EXISTS survey_${result.results.insertId} (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, latitude TEXT, longitude TEXT, address TEXT, description TEXT, date TEXT);`;
-      console.log(query);
-      await createNewTable(query);
-    }
-    onClose(result.success);
+    if (result.success) console.log('=> data inserted successfully');
+    onClose(result.success, plotData, survey);
   }
 
   return (
@@ -69,7 +100,7 @@ export default function SurveyFormBottomSheet({refRBSheet, onClose}) {
               marginTop: 20,
             }}
             placeHolder={'Name'}
-            title={'Name Of Survey'}
+            title={'Name'}
             value={data.name}
             onChangeText={text =>
               setData(prevData => ({
@@ -78,10 +109,23 @@ export default function SurveyFormBottomSheet({refRBSheet, onClose}) {
               }))
             }
           />
-
+          <InputTextComp
+            extraStyle={{
+              marginTop: 20,
+            }}
+            placeHolder={'Description'}
+            title={'Description'}
+            value={data.description}
+            onChangeText={text =>
+              setData(prevData => ({
+                ...prevData,
+                description: text,
+              }))
+            }
+          />
           <ButtonComp
             onPress={() => createNewSurvey()}
-            title={'Create Survey'}
+            title={'Submit'}
             extraStyle={{
               marginTop: 20,
             }}

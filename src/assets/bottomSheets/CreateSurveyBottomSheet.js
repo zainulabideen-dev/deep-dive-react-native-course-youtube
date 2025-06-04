@@ -28,7 +28,7 @@ export default function CreateSurveyBottomSheet({refRBSheet, onClose}) {
       [data.name, getFormattedDate()],
     );
     if (result.success) {
-      const query = `CREATE TABLE IF NOT EXISTS survey_${result.results.insertId} (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, latitude TEXT, longitude TEXT, address TEXT, description TEXT, date TEXT);`;
+      const query = `CREATE TABLE IF NOT EXISTS survey_${result.results.insertId} (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, latitude TEXT, longitude TEXT, coordinates TEXT, address TEXT, description TEXT, plotType TEXT, date TEXT);`;
       console.log(query);
       await createNewTable(query);
     }
@@ -78,7 +78,6 @@ export default function CreateSurveyBottomSheet({refRBSheet, onClose}) {
               }))
             }
           />
-
           <ButtonComp
             onPress={() => createNewSurvey()}
             title={'Create Survey'}

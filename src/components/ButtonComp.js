@@ -35,6 +35,7 @@ export default function ButtonComp({
           style={{
             color: 'white',
             fontFamily: 'Poppins-Regular',
+            includeFontPadding: false,
           }}>
           {title}
         </Text>

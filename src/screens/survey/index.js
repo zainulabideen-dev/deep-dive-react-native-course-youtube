@@ -1,7 +1,7 @@
 import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import React, {useRef, useState} from 'react';
 import SafeAreaComp from '../../components/SafeAreaComp';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, {Marker, Polygon, PROVIDER_GOOGLE} from 'react-native-maps';
 import SurveyFormBottomSheet from '../../assets/bottomSheets/SurveyFormBottomSheet';
 
 const plotIcons = [
@@ -28,16 +28,18 @@ export default function SurveyScreen({route, navigation}) {
   const [data, setData] = useState({
     activePlotIcons: plotIcons[0],
     listOfMarkers: [],
-    plotMarkerInfo: undefined,
+    plottedMarker: undefined,
+    plottedLine: undefined,
+    plottedPolygon: undefined,
   });
 
   const handleMapPress = event => {
-    const newMarker = {
+    const mapCoordinates = {
       coordinate: event.nativeEvent.coordinate,
     };
     setData(prevData => ({
       ...prevData,
-      plotMarkerInfo: newMarker,
+      plottedMarker: data.activePlotIcons.id == 1 ? mapCoordinates : undefined,
     }));
     refRBSheet.current.open();
     // setData(prevData => ({
@@ -54,6 +56,12 @@ export default function SurveyScreen({route, navigation}) {
       needPadding={false}>
       <SurveyFormBottomSheet
         refRBSheet={refRBSheet}
+        plotData={{
+          point: data.plottedMarker,
+          line: data.plottedLine,
+          polygon: data.plottedPolygon,
+        }}
+        survey={survey}
         onClose={() => refRBSheet.current.close()}
       />
       <View style={{flex: 1}}>
