@@ -1,8 +1,9 @@
 import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import SafeAreaComp from '../../components/SafeAreaComp';
 import MapView, {Marker, Polygon, PROVIDER_GOOGLE} from 'react-native-maps';
 import SurveyFormBottomSheet from '../../assets/bottomSheets/SurveyFormBottomSheet';
+import {getDataFromSqlite} from '../../config/sqliteStorage';
 
 const plotIcons = [
   {
@@ -27,25 +28,55 @@ export default function SurveyScreen({route, navigation}) {
   const refRBSheet = useRef();
   const [data, setData] = useState({
     activePlotIcons: plotIcons[0],
-    listOfMarkers: [],
+    collectedDataList: [],
     plottedMarker: undefined,
     plottedLine: undefined,
     plottedPolygon: undefined,
+    markerPressed: false,
   });
 
-  const handleMapPress = event => {
+  const ignoreNextMapPress = useRef(false);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  async function fetchData() {
+    const tableName = `survey_${survey.id}`;
+    try {
+      const response = await getDataFromSqlite(`SELECT * FROM ${tableName}`);
+      setData(prevData => ({
+        ...prevData,
+        collectedDataList: response.dataList,
+      }));
+    } catch (error) {
+      console.log('=> error', error);
+    }
+  }
+
+  const handleMarkerPress = () => {
+    ignoreNextMapPress.current = true;
+    setTimeout(() => {
+      ignoreNextMapPress.current = false;
+    }, 100); // Short enough to skip just the next map press
+  };
+
+  const handleMapPress = async coordinate => {
+    if (ignoreNextMapPress.current) {
+      ignoreNextMapPress.current = false; // Reset flag
+      return;
+    }
+
+    console.log('handleMapPress', data.markerPressed);
     const mapCoordinates = {
-      coordinate: event.nativeEvent.coordinate,
+      coordinate,
     };
+    if (data.markerPressed) return;
     setData(prevData => ({
       ...prevData,
       plottedMarker: data.activePlotIcons.id == 1 ? mapCoordinates : undefined,
     }));
     refRBSheet.current.open();
-    // setData(prevData => ({
-    //   ...prevData,
-    //   listOfMarkers: [...prevData.listOfMarkers, newMarker],
-    // }));
   };
 
   return (
@@ -111,16 +142,30 @@ export default function SurveyScreen({route, navigation}) {
             provider={PROVIDER_GOOGLE}
             style={styles.map}
             zoomControlEnabled
-            onPress={handleMapPress}
+            onPress={event => {
+              const {coordinate} = event.nativeEvent;
+              handleMapPress(coordinate);
+            }}
             region={{
               latitude: 37.78825,
               longitude: -122.4324,
               latitudeDelta: 0.015,
               longitudeDelta: 0.0121,
             }}>
-            {data.listOfMarkers.map((marker, id) => (
-              <Marker key={id} coordinate={marker.coordinate} />
-            ))}
+            {data.collectedDataList.map((marker, id) => {
+              if (marker.plotType != 'point') return;
+              return (
+                <Marker
+                  key={id}
+                  title={marker.name}
+                  onPress={handleMarkerPress}
+                  coordinate={{
+                    latitude: parseFloat(marker.latitude),
+                    longitude: parseFloat(marker.longitude),
+                  }}
+                />
+              );
+            })}
           </MapView>
         </View>
       </View>
