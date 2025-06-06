@@ -1,9 +1,17 @@
 import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import SafeAreaComp from '../../components/SafeAreaComp';
-import MapView, {Marker, Polygon, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, {
+  Marker,
+  Polygon,
+  Polyline,
+  PROVIDER_GOOGLE,
+} from 'react-native-maps';
 import SurveyFormBottomSheet from '../../assets/bottomSheets/SurveyFormBottomSheet';
 import {getDataFromSqlite} from '../../config/sqliteStorage';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import Feather from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const plotIcons = [
   {
@@ -20,6 +28,21 @@ const plotIcons = [
   },
 ];
 
+const polylineControls = [
+  {
+    id: 1,
+    image: <Feather size={25} name="x" />,
+  },
+  {
+    id: 2,
+    image: <SimpleLineIcons size={25} name="action-redo" />,
+  },
+  {
+    id: 3,
+    image: <Ionicons size={25} name="save-outline" color="green" />,
+  },
+];
+
 //GOOGLE_MAPS_API_KEY
 
 export default function SurveyScreen({route, navigation}) {
@@ -33,6 +56,7 @@ export default function SurveyScreen({route, navigation}) {
     plottedLine: undefined,
     plottedPolygon: undefined,
     markerPressed: false,
+    polylineCoordinates: [],
   });
 
   const ignoreNextMapPress = useRef(false);
@@ -66,17 +90,24 @@ export default function SurveyScreen({route, navigation}) {
       ignoreNextMapPress.current = false; // Reset flag
       return;
     }
-
-    console.log('handleMapPress', data.markerPressed);
-    const mapCoordinates = {
-      coordinate,
-    };
-    if (data.markerPressed) return;
-    setData(prevData => ({
-      ...prevData,
-      plottedMarker: data.activePlotIcons.id == 1 ? mapCoordinates : undefined,
-    }));
-    refRBSheet.current.open();
+    if (data.activePlotIcons.id == 1) {
+      const mapCoordinates = {
+        coordinate,
+      };
+      if (data.markerPressed) return;
+      setData(prevData => ({
+        ...prevData,
+        plottedMarker:
+          data.activePlotIcons.id == 1 ? mapCoordinates : undefined,
+      }));
+      refRBSheet.current.open();
+    } else if (data.activePlotIcons.id == 2) {
+      console.log('create polyline', coordinate);
+      setData(prevData => ({
+        ...prevData,
+        polylineCoordinates: [...prevData.polylineCoordinates, coordinate],
+      }));
+    }
   };
 
   return (
@@ -110,6 +141,8 @@ export default function SurveyScreen({route, navigation}) {
                   setData(prevData => ({
                     ...prevData,
                     activePlotIcons: plot,
+                    polylineCoordinates:
+                      plot.id != 2 ? [] : prevData.polylineCoordinates,
                   }));
                 }}
                 style={{
@@ -138,6 +171,34 @@ export default function SurveyScreen({route, navigation}) {
           style={{
             flex: 1,
           }}>
+          {data.polylineCoordinates.length > 0 ? (
+            <View
+              style={{
+                zIndex: 1,
+                flexDirection: 'row',
+                position: 'absolute',
+                bottom: 5,
+                left: 5,
+              }}>
+              {polylineControls.map(plot => {
+                return (
+                  <TouchableOpacity
+                    key={plot.id}
+                    onPress={() => {}}
+                    style={{
+                      borderColor: '#abb2b9',
+                      borderWidth: 1,
+                      padding: 7,
+                      backgroundColor: 'white',
+                      marginRight: 15,
+                      borderRadius: 5,
+                    }}>
+                    <View>{plot.image}</View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          ) : null}
           <MapView
             provider={PROVIDER_GOOGLE}
             style={styles.map}
@@ -166,6 +227,18 @@ export default function SurveyScreen({route, navigation}) {
                 />
               );
             })}
+            {data.polylineCoordinates.length > 0 ? (
+              <Marker
+                title={'start'}
+                pinColor={'#52be80'}
+                coordinate={data.polylineCoordinates[0]}
+              />
+            ) : null}
+            <Polyline
+              coordinates={data.polylineCoordinates}
+              strokeColor="#FF0000" // red line
+              strokeWidth={4}
+            />
           </MapView>
         </View>
       </View>
