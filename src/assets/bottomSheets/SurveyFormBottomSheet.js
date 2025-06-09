@@ -45,7 +45,8 @@ export default function SurveyFormBottomSheet({
       plotData.point == undefined ? '' : plotData.point.coordinate.latitude;
     const longitude =
       plotData.point == undefined ? '' : plotData.point.coordinate.longitude;
-    const coordinates = '';
+    const coordinates =
+      plotData.line == undefined ? '' : JSON.stringify(plotData.line);
     const address = '';
     let plotType = getPlotType();
 

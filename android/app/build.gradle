@@ -4,6 +4,13 @@ apply plugin: "com.facebook.react"
 apply plugin: 'com.google.gms.google-services'
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
 
+def dotenv = new Properties()
+file("${rootDir}/../.env").withInputStream { stream ->
+    dotenv.load(stream)
+}
+
+
+
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -81,6 +88,9 @@ android {
 
     namespace "com.geosurveycwz"
     defaultConfig {
+        manifestPlaceholders = [
+            MY_API_KEY: dotenv.getProperty("GOOGLE_MAPS_API_KEY")
+        ]
         applicationId "com.geosurveycwz"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion

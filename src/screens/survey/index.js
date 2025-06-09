@@ -72,6 +72,8 @@ export default function SurveyScreen({route, navigation}) {
       setData(prevData => ({
         ...prevData,
         collectedDataList: response.dataList,
+        polylineCoordinates:
+          data.activePlotIcons.id == 2 ? [] : prevData.polylineCoordinates,
       }));
     } catch (error) {
       console.log('=> error', error);
@@ -110,6 +112,28 @@ export default function SurveyScreen({route, navigation}) {
     }
   };
 
+  function managePolyLineControls(control) {
+    if (control.id == 2 && data.polylineCoordinates.length > 0) {
+      setData(prevData => ({
+        ...prevData,
+        polylineCoordinates: prevData.polylineCoordinates.slice(0, -1),
+      }));
+    } else if (control.id == 1 && data.polylineCoordinates.length > 0) {
+      setData(prevData => ({
+        ...prevData,
+        polylineCoordinates: [],
+      }));
+    } else if (control.id == 3 && data.polylineCoordinates.length > 0) {
+      setData(prevData => ({
+        ...prevData,
+        plottedLine: data.polylineCoordinates,
+        plottedMarker: undefined,
+        plottedPolygon: undefined,
+      }));
+      refRBSheet.current.open();
+    }
+  }
+
   return (
     <SafeAreaComp
       name={survey.name}
@@ -124,7 +148,10 @@ export default function SurveyScreen({route, navigation}) {
           polygon: data.plottedPolygon,
         }}
         survey={survey}
-        onClose={() => refRBSheet.current.close()}
+        onClose={() => {
+          refRBSheet.current.close();
+          fetchData();
+        }}
       />
       <View style={{flex: 1}}>
         <View
@@ -184,7 +211,7 @@ export default function SurveyScreen({route, navigation}) {
                 return (
                   <TouchableOpacity
                     key={plot.id}
-                    onPress={() => {}}
+                    onPress={() => managePolyLineControls(plot)}
                     style={{
                       borderColor: '#abb2b9',
                       borderWidth: 1,
@@ -214,18 +241,28 @@ export default function SurveyScreen({route, navigation}) {
               longitudeDelta: 0.0121,
             }}>
             {data.collectedDataList.map((marker, id) => {
-              if (marker.plotType != 'point') return;
-              return (
-                <Marker
-                  key={id}
-                  title={marker.name}
-                  onPress={handleMarkerPress}
-                  coordinate={{
-                    latitude: parseFloat(marker.latitude),
-                    longitude: parseFloat(marker.longitude),
-                  }}
-                />
-              );
+              if (marker.plotType == 'point') {
+                return (
+                  <Marker
+                    key={id}
+                    title={marker.name}
+                    onPress={handleMarkerPress}
+                    coordinate={{
+                      latitude: parseFloat(marker.latitude),
+                      longitude: parseFloat(marker.longitude),
+                    }}
+                  />
+                );
+              } else if (marker.plotType == 'line') {
+                return (
+                  <Polyline
+                    key={id}
+                    coordinates={JSON.parse(marker.coordinates)}
+                    strokeColor="#FF0000" // red line
+                    strokeWidth={4}
+                  />
+                );
+              }
             })}
             {data.polylineCoordinates.length > 0 ? (
               <Marker
