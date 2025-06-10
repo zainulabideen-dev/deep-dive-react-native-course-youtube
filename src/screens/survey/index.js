@@ -72,8 +72,7 @@ export default function SurveyScreen({route, navigation}) {
       setData(prevData => ({
         ...prevData,
         collectedDataList: response.dataList,
-        polylineCoordinates:
-          data.activePlotIcons.id == 2 ? [] : prevData.polylineCoordinates,
+        polylineCoordinates: [],
       }));
     } catch (error) {
       console.log('=> error', error);
@@ -103,8 +102,7 @@ export default function SurveyScreen({route, navigation}) {
           data.activePlotIcons.id == 1 ? mapCoordinates : undefined,
       }));
       refRBSheet.current.open();
-    } else if (data.activePlotIcons.id == 2) {
-      console.log('create polyline', coordinate);
+    } else if (data.activePlotIcons.id == 2 || data.activePlotIcons.id == 3) {
       setData(prevData => ({
         ...prevData,
         polylineCoordinates: [...prevData.polylineCoordinates, coordinate],
@@ -123,12 +121,28 @@ export default function SurveyScreen({route, navigation}) {
         ...prevData,
         polylineCoordinates: [],
       }));
-    } else if (control.id == 3 && data.polylineCoordinates.length > 0) {
+    } else if (
+      data.activePlotIcons.id == 2 &&
+      control.id == 3 &&
+      data.polylineCoordinates.length > 0
+    ) {
       setData(prevData => ({
         ...prevData,
         plottedLine: data.polylineCoordinates,
         plottedMarker: undefined,
         plottedPolygon: undefined,
+      }));
+      refRBSheet.current.open();
+    } else if (
+      data.activePlotIcons.id == 3 &&
+      control.id == 3 &&
+      data.polylineCoordinates.length > 2
+    ) {
+      setData(prevData => ({
+        ...prevData,
+        plottedLine: undefined,
+        plottedMarker: undefined,
+        plottedPolygon: data.polylineCoordinates,
       }));
       refRBSheet.current.open();
     }
@@ -241,7 +255,7 @@ export default function SurveyScreen({route, navigation}) {
               longitudeDelta: 0.0121,
             }}>
             {data.collectedDataList.map((marker, id) => {
-              if (marker.plotType == 'point') {
+              if (data.activePlotIcons.id == 1 && marker.plotType == 'point') {
                 return (
                   <Marker
                     key={id}
@@ -253,13 +267,29 @@ export default function SurveyScreen({route, navigation}) {
                     }}
                   />
                 );
-              } else if (marker.plotType == 'line') {
+              } else if (
+                data.activePlotIcons.id == 2 &&
+                marker.plotType == 'line'
+              ) {
                 return (
                   <Polyline
                     key={id}
                     coordinates={JSON.parse(marker.coordinates)}
                     strokeColor="#FF0000" // red line
                     strokeWidth={4}
+                  />
+                );
+              } else if (
+                data.activePlotIcons.id == 3 &&
+                marker.plotType == 'polygon'
+              ) {
+                return (
+                  <Polygon
+                    key={id}
+                    coordinates={JSON.parse(marker.coordinates)}
+                    strokeColor="#F00"
+                    fillColor="rgba(255,0,0,0.3)"
+                    strokeWidth={2}
                   />
                 );
               }
@@ -271,11 +301,22 @@ export default function SurveyScreen({route, navigation}) {
                 coordinate={data.polylineCoordinates[0]}
               />
             ) : null}
-            <Polyline
-              coordinates={data.polylineCoordinates}
-              strokeColor="#FF0000" // red line
-              strokeWidth={4}
-            />
+            {data.activePlotIcons.id == 2 ? (
+              <Polyline
+                coordinates={data.polylineCoordinates}
+                strokeColor="#FF0000" // red line
+                strokeWidth={4}
+              />
+            ) : null}
+            {data.activePlotIcons.id == 3 &&
+            data.polylineCoordinates.length > 0 ? (
+              <Polygon
+                coordinates={data.polylineCoordinates}
+                strokeColor="#F00"
+                fillColor="rgba(255,0,0,0.3)"
+                strokeWidth={2}
+              />
+            ) : null}
           </MapView>
         </View>
       </View>

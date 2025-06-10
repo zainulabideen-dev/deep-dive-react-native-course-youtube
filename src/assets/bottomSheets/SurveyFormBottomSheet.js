@@ -31,6 +31,13 @@ export default function SurveyFormBottomSheet({
     }
   }
 
+  function coordinatesToString() {
+    if (plotData.point != undefined) return '';
+    else if (plotData.line != undefined) return JSON.stringify(plotData.line);
+    else if (plotData.polygon != undefined)
+      return JSON.stringify(plotData.polygon);
+  }
+
   async function createNewSurvey() {
     const tableName = `survey_${survey.id}`;
     if (data.name === undefined || data.name.length === 0) {
@@ -45,26 +52,31 @@ export default function SurveyFormBottomSheet({
       plotData.point == undefined ? '' : plotData.point.coordinate.latitude;
     const longitude =
       plotData.point == undefined ? '' : plotData.point.coordinate.longitude;
-    const coordinates =
-      plotData.line == undefined ? '' : JSON.stringify(plotData.line);
+    const coordinates = coordinatesToString();
+    const plotType = getPlotType();
     const address = '';
-    let plotType = getPlotType();
 
-    const result = await insertDataInSqliteTable(
-      `INSERT INTO ${tableName} (name, latitude, longitude, coordinates, address, description, plotType, date) VALUES (?,?,?,?,?,?,?,?)`,
-      [
-        data.name,
-        latitude,
-        longitude,
-        coordinates,
-        address,
-        data.description,
-        plotType,
-        getFormattedDate(),
-      ],
-    );
-    if (result.success) console.log('=> data inserted successfully');
-    onClose(result.success, plotData, survey);
+    //console.log(coordinates, plotType);
+
+    try {
+      const result = await insertDataInSqliteTable(
+        `INSERT INTO ${tableName} (name, latitude, longitude, coordinates, address, description, plotType, date) VALUES (?,?,?,?,?,?,?,?)`,
+        [
+          data.name,
+          latitude,
+          longitude,
+          coordinates,
+          address,
+          data.description,
+          plotType,
+          getFormattedDate(),
+        ],
+      );
+      if (result.success) console.log('=> data inserted successfully');
+      onClose(result.success, plotData, survey);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
