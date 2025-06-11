@@ -8,6 +8,7 @@ import Toast from 'react-native-toast-message';
 import HomeScreen from '../home';
 import ForgotPasswordScreen from '../forgotPassword';
 import SurveyScreen from '../survey';
+import SurveyTableScreen from '../surveyTable';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +33,10 @@ export default function NavigationScreen() {
             component={ForgotPasswordScreen}
           />
           <Stack.Screen name="SurveyScreen" component={SurveyScreen} />
+          <Stack.Screen
+            name="SurveyTableScreen"
+            component={SurveyTableScreen}
+          />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast position="top" topOffset={50} visibilityTime={2000} />

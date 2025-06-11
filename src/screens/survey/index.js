@@ -26,6 +26,10 @@ const plotIcons = [
     id: 3,
     image: require('../../assets/images/polygon.png'),
   },
+  {
+    id: 4,
+    image: require('../../assets/images/table.png'),
+  },
 ];
 
 const polylineControls = [
@@ -57,6 +61,7 @@ export default function SurveyScreen({route, navigation}) {
     plottedPolygon: undefined,
     markerPressed: false,
     polylineCoordinates: [],
+    tableName: `survey_${survey.id}`,
   });
 
   const ignoreNextMapPress = useRef(false);
@@ -179,6 +184,12 @@ export default function SurveyScreen({route, navigation}) {
               <TouchableOpacity
                 key={plot.id}
                 onPress={() => {
+                  if (plot.id == 4) {
+                    navigation.navigate('SurveyTableScreen', {
+                      tableName: data.tableName,
+                    });
+                    return;
+                  }
                   setData(prevData => ({
                     ...prevData,
                     activePlotIcons: plot,

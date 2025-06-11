@@ -29,7 +29,9 @@ export default function HeaderComp({
   }
 
   const ProfileIcon = () => {
-    if (data.user == undefined) return;
+    const screensNoNeedProfileIcon = ['Survey Data Table'];
+    if (data.user == undefined || screensNoNeedProfileIcon.includes(name))
+      return;
 
     if (data.user.photoURL == null) {
       return (
